@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/debit-pull/style.css" />
+    <script
+      type="text/javascript"
+      src="https://js.verygoodvault.com/vgs-collect/2.11.0/vgs-collect.js"
+    ></script>
+    <style>
+      * {
+          box-sizing: border-box;
+      }
+      form {
+          margin-top:30px;
+          width: 80%;
+          margin: 0 auto;
+          font-size:25px;
+      }
+      .form-field {
+
+          width: 100%;
+          height: 100px;
+          position: relative;
+          background: white;
+          margin-bottom: 10px;
+          border-radius: 4px;
+          border: 1px solid #c5c5c5;
+          padding: 0 10px;
+          outline: none;
+          margin-top:30px;
+          margin-bottom:20px;
+      }
+      iframe {
+          width: 100%;
+          height: 100%;
+      }
+      .group {
+          display: flex;
+          flex-flow: wrap;
+      }
+      .group div {
+          flex: 0 0 50%;
+      }
+      .group div:first-child {
+          border-radius: 4px 0 0 4px;
+      }
+      .group div:last-child {
+          border-radius: 0 4px 4px 0;
+      }
+      .btn {
+          height: 80px;
+          width: 100%;
+          background: #71B7F9;
+          border: none;
+          color: white;
+          font-size:45px
+      }
+      #card-details {
+          display: block;
+          width:100%;
+          margin 0 auto;
+
+      }
+      #card-details.visible {
+          display: block;
+      }
+      #result-error{
+          text-align:center;
+          color:red;
+          font-size:20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="">
+      <form id="input-form" style="display: none">
+        <input
+          id="VGS-Vault-Id"
+          class="form-field"
+          placeholder="VGS Vault Id"
+        />
+        <input id="contact-id" class="form-field" placeholder="Contact Id" />
+        <input id="token" class="form-field" placeholder="Token" />
+        <select id="VGS-env" class="form-field">
+          <option value="sandbox">Sandbox</option>
+          <option value="live">Production</option>
+        </select>
+        <button type="submit" class="btn">Next</button>
+      </form>
+      <div id="card-details">
+        <form id="card-form">
+          <input type="hidden" id="contact_id" />
+          <input type="hidden" id="card_token" />
+          <div id="cardNumber" class="form-field"></div>
+          <div class="group">
+            <div id="card-expiration-date" class="form-field"></div>
+            <div id="card-expiration-year" class="form-field"></div>
+          </div>
+          <button type="submit" class="btn">Submit</button>
+        </form>
+      </div>
+      <pre id="result-error"></pre>
+    </div>
+
+    <!--Include script with VGS Collect form initialization-->
+    <script>
+      var form = null;
+      var contactId = null;
+      var token = null;
+      window.addEventListener("message", (message) => {
+        const obj = JSON.parse(message.data);
+        contactId = obj.contact_id;
+        token = obj.debit_card_token;
+      });
+      document.addEventListener("DOMContentLoaded", function () {
+        var vaultId = "tntbevlgikb";
+        var vgsEnv = "sandbox";
+        const css = {
+          boxSizing: "border-box",
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI"',
+          fontSize: "35px",
+        };
+        // VGS Collect form initialization
+        form = window.VGSCollect.create("tntbevlgikb", "sandbox", () => {});
+
+        // Create VGS Collect field for credit card number
+        form.field("#cardNumber", {
+          type: "card-number",
+          name: "cardNumber",
+          showCardIcon: true,
+          successColor: "#4F8A10",
+          errorColor: "#D8000C",
+          placeholder: "Card number",
+          validations: ["required", "validCardNumberExtended"],
+          css: css,
+        });
+
+        form.field("#card-expiration-date", {
+          type: "number",
+          name: "expiryMonth",
+          successColor: "#4F8A10",
+          errorColor: "#D8000C",
+          placeholder: "01",
+          validations: ["required", "/^(0*([1-9]|1[0-2]))$/"],
+          css: css,
+        });
+
+        form.field("#card-expiration-year", {
+          type: "number",
+          name: "expiryYear",
+          successColor: "#4F8A10",
+          errorColor: "#D8000C",
+          placeholder: "2022",
+          validations: ["required", "/^([0-9]{4})$/"],
+          css: css,
+        });
+
+        document.getElementById("card-details").classList.add("visible");
+      });
+
+      document.getElementById("card-form").addEventListener(
+        "submit",
+        function (e) {
+          e.preventDefault();
+
+          var url = "/v1/contact/" + contactId + "/debitcard";
+
+          form.submit(
+            url,
+            {
+              method: "PATCH",
+              headers: {
+                "sd-debitcard-token": token,
+              },
+              data: (formValues) => {
+                return {
+                  debitCard: {
+                    cardNumber: formValues["cardNumber"],
+                    expiryMonth: formValues["expiryMonth"],
+                    expiryYear: formValues["expiryYear"],
+                    address: {
+                      addressType: "card",
+                      line1: "2992 Cameron Road",
+                      line2: "",
+                      city: "Malakoff",
+                      state: "NY",
+                      country: "US",
+                      postalCode: "14236",
+                    },
+                  },
+                };
+              },
+            },
+            function (status, data) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify(data, null, 4)
+              );
+            }
+          );
+        },
+        function (errors) {
+          document.getElementById("result-error").innerHTML = errors;
+        }
+      );
+    </script>
+  </body>
+</html>
