@@ -8,75 +8,78 @@
     ></script>
     <style>
       * {
-          box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      .section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
       }
       form {
-          margin-top:30px;
-          width: 80%;
-          margin: 0 auto;
-          font-size:25px;
-          overflow-x: scroll; 
-          -webkit-overflow-scrolling: touch;
+        margin-top: 30px;
+        /* width: fit-content; */
+        margin: 0 auto;
+        font-size: 25px;
+        margin-inline: 5rem;
+
       }
       .form-field {
-
-          width: 100%;
-          height: 100px;
-          position: relative;
-          background: white;
-          margin-bottom: 10px;
-          border-radius: 4px;
-          border: 1px solid #c5c5c5;
-          padding: 0 10px;
-          outline: none;
-          margin-top:30px;
-          margin-bottom:20px;
-          overflow-x: scroll; 
-          -webkit-overflow-scrolling: touch;
+        width: 100%;
+        height: 100px;
+        position: relative;
+        background: white;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        border: 1px solid #c5c5c5;
+        padding: 0 10px;
+        outline: none;
+        margin-top: 30px;
+        margin-bottom: 20px;
       }
       iframe {
-          width: 100%;
-          height: 100%;
+        width: 100%;
+        height: 100%;
       }
       .group {
-          display: flex;
-          flex-flow: wrap;
+        display: flex;
+        flex-flow: wrap;
       }
       .group div {
-          flex: 0 0 50%;
+        flex: 0 0 50%;
       }
       .group div:first-child {
-          border-radius: 4px 0 0 4px;
+        border-radius: 4px 0 0 4px;
       }
       .group div:last-child {
-          border-radius: 0 4px 4px 0;
+        border-radius: 0 4px 4px 0;
       }
       .btn {
-          height: 80px;
-          width: 100%;
-          background: #71B7F9;
-          border: none;
-          color: white;
-          font-size:45px
+        height: 80px;
+        width: 100%;
+        background: #71b7f9;
+        border: none;
+        color: white;
+        font-size: 45px;
       }
       #card-details {
-          display: block;
-          width:100%;
-          margin 0 auto;
-
+        display: block;
+        width: 100%;
+        margin: auto;
       }
       #card-details.visible {
-          display: block;
+        display: block;
       }
-      #result-error{
-          text-align:center;
-          color:red;
-          font-size:20px;
+      #result-error {
+        text-align: center;
+        color: red;
+        font-size: 20px;
       }
+      
     </style>
   </head>
   <body>
-    <div class="">
+    <div class="section">
       <form id="input-form" style="display: none">
         <input
           id="VGS-Vault-Id"
@@ -100,7 +103,7 @@
             <div id="card-expiration-date" class="form-field"></div>
             <div id="card-expiration-year" class="form-field"></div>
           </div>
-          <button type="submit" class="btn">Submit 1</button>
+          <button type="submit" class="btn">Submit</button>
         </form>
       </div>
       <pre id="result-error"></pre>
